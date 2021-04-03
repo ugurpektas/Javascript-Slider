@@ -29,35 +29,79 @@ var models = [
 
 var index = 0;
 var slaytCount = models.length;
+var settings = {
+    duration : '2000',
+    random : false
+};
+var interval;
 
-showSlide(index);
+init(settings);
 
-    //sol butonu
+    //sol ok butonu
 document.querySelector('.fa-arrow-circle-left').addEventListener('click',function(){
     index--;
     showSlide(index);
     console.log(index);
 });
-    //sağ butonu
+    //sağ ok butonu
 document.querySelector('.fa-arrow-circle-right').addEventListener('click',function(){
     index++;
     showSlide(index);
     console.log(index);
 });
+    //ok üzerine gelindiğinde
+document.querySelectorAll('.arrow').forEach(function(item){ 
+    item.addEventListener('mouseenter',function(){
+        clearInterval(interval);    
+    })
+});
+    //ok üzerinden çıktığımızda
+document.querySelectorAll('.arrow').forEach(function(item){
+    item.addEventListener('mouseleave',function(){
+        init(settings);
+    })
+});
 
+//setTimeOut => belli bir saniye sonra başlatmak için kullanılan kod
+//setInterval => belli bir saniye aralığında bir sürekli tekrar eden kod
+//clearInterval => setInterval ' kodunu durdurmaya yarar.
+//math.floor() => virgüllü sayıları alta yuvarlar
+//math.random() => 0 ile 1 arasında random sayı üretir.
+
+function init(settings){    
+    var prev;
+    interval = setInterval(function(){
+        if(settings.random){    //settings'in içerisindeki değer varsayılan olarak true ise slayt random devam edicek
+            //random index üretmek
+            do {
+                index = Math.floor(Math.random() * slaytCount);
+            }while (index == prev)  // eşitlik olduğu sürece döngü devam edicek
+            prev = index;
+        }else {                 // false ise slayt sıra ile devam edicek
+            //artan index
+            if(slaytCount == index+1 ){
+                index = -1;
+            }
+            showSlide(index);
+            index++;
+        }
+
+        console.log(index);
+        showSlide(index);
+
+    },settings.duration)
+}
 
 
 function showSlide(i) {
 
     index = i;
-
     if (i<0) {
         index = slaytCount - 1;
     }
     if (i >= slaytCount){
         index = 0;
     }
-
 
     //başlık isim
 document.querySelector('.card-title').textContent = models[index].name;
